@@ -5,16 +5,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import norm, binom, poisson
 
-# Carregar dados
 df = pd.read_excel("data/campeonato-brasileiro-estatisticas-full.xlsx")
 
-# Configuração do Streamlit
 st.title("Análise de Dados - Campeonato Brasileiro")
 st.sidebar.header("Configurações")
 
-# Exibir primeiras linhas
-tab1, tab2, tab3 = st.tabs(
-    ["📊 Apresentação dos Dados", "📈 Análises Estatísticas", "🎲 Distribuições Probabilísticas"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["📊 Apresentação dos Dados", "📈 Análises Estatísticas", "🎲 Distribuições Probabilísticas", "📈 Análise Crítica"])
 
 with tab1:
     st.header("📌 Apresentação dos Dados")
@@ -22,8 +19,18 @@ with tab1:
     st.write("### Primeiras linhas do dataset:")
     st.dataframe(df.head())
 
-    st.write("### Tipos de Variáveis")
-    st.write(df.dtypes)
+    st.write("### Classificação das Variáveis:")
+    variaveis = {
+    "Variável": ["clube", "chutes", "chutes_no_alvo", "posse_de_bola", "passes", 
+                 "faltas", "cartao_amarelo", "cartao_vermelho", "conversao"],
+    "Tipo": ["Qualitativa", "Quantitativa", "Quantitativa", "Quantitativa", "Quantitativa",
+             "Quantitativa", "Quantitativa", "Quantitativa", "Quantitativa"],
+    "Subtipo": ["Nominal", "Discreta", "Discreta", "Contínua", "Discreta",
+                "Discreta", "Discreta", "Discreta", "Contínua"]
+    }
+
+    df_variaveis = pd.DataFrame(variaveis)
+    st.dataframe(df_variaveis)
 
 with tab2:
     st.header("📊 Medidas Estatísticas")
@@ -86,3 +93,33 @@ with tab3:
         ax.set_title(f"Distribuição Binomial para {dist_col}")
         ax.legend()
         st.pyplot(fig)
+
+with tab4:
+    st.header("Eficiência Ofensiva")
+    
+    st.subheader("Relação entre Chutes e Chutes no Alvo")
+    fig, ax = plt.subplots()
+    sns.scatterplot(data=df, x='chutes', y='chutes_no_alvo', ax=ax)
+    ax.set_title("Chutes vs. Chutes no Alvo")
+    st.pyplot(fig)
+    
+    st.write("Observa-se uma forte correlação positiva: partidas com mais chutes tendem a ter mais chutes no alvo, "
+             "mas a taxa de conversão pode variar.")
+
+    st.header("Controle do Jogo")
+    
+    st.subheader("Posse de Bola vs. Passes")
+    fig, ax = plt.subplots()
+    sns.scatterplot(data=df, x='posse_de_bola', y='passes', ax=ax)
+    ax.set_title("Posse de Bola vs. Número de Passes")
+    st.pyplot(fig)
+    
+    st.write("Ou seja, times com maior posse de bola tendem a realizar mais passes, evidenciando o controle do jogo.")
+    
+    st.subheader("Posse de Bola vs. Chutes")
+    fig2, ax2 = plt.subplots()
+    sns.scatterplot(data=df, x='posse_de_bola', y='chutes', ax=ax2)
+    ax2.set_title("Posse de Bola vs. Chutes")
+    st.pyplot(fig2)
+    
+    st.write("Embora o domínio de bola facilite a criação de jogadas, nem sempre se converte em maior número de chutes ou finalizações.")
