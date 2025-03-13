@@ -6,7 +6,7 @@ import seaborn as sns
 from scipy.stats import norm, binom, poisson
 
 # Carregar dados
-df = pd.read_csv("data/campeonato-brasileiro-estatisticas-full.csv")
+df = pd.read_excel("data/campeonato-brasileiro-estatisticas-full.xlsx")
 
 # Configuração do Streamlit
 st.title("Análise de Dados - Campeonato Brasileiro")
